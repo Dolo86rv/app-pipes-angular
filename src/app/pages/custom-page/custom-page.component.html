@@ -18,7 +18,32 @@
 
 <div  class="divider"></div>
 
-<div class="overflow-x-auto w-full">
+<section class="my-2">
+  <h1 class="text-2xl font-bold">Filtrando por: {{ searchQuery() }} Ordenando por: {{ sortBy() }} </h1>
+  <div class="flex gap-2 justify-end w-full mt-2">
+    <input
+      class="input input-bordered w-full mr-52 max-w-xs"
+      type="text"
+      placeholder="Buscar héroe"
+      (input)="searchQuery.set(txtSearch.value)"
+      #txtSearch
+    >
+    <button (click)="sortBy.set('name')" class="btn btn-primary">
+      Por nombre
+    </button>
+    <button (click)="sortBy.set('canFly')" class="btn btn-accent">
+      Por volar
+    </button>
+    <button (click)="sortBy.set('color')"  class="btn btn-secondary">
+      Por color
+    </button>
+    <button (click)="sortBy.set('creator')"  class="btn btn-info">
+      Por creador
+    </button>
+  </div>
+</section>
+
+<section class="overflow-x-auto w-full">
   <table class="table table-xs w-full">
     <!-- head -->
     <thead>
@@ -32,12 +57,37 @@
     </thead>
     <tbody>
       <!-- row 1 -->
-      <tr>
-        <th>1</th>
-        <td>Cy Ganderton</td>
-        <td>Quality Control Specialist</td>
-        <td>Blue</td>
-      </tr>
+       @for (item of heroes() | heroFilter:searchQuery() | heroSortBy: sortBy() ; track item.id; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.name }}</td>
+          <td>
+            <span
+              class="text-xs w-44"
+              [class.text-success]="item.canFly"
+              [class.text-accent]="!item.canFly"
+            >
+              {{ item.canFly | canFly }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="text-xs w-44"
+              [style.color]="item.color | heroTextColor"
+            >
+              {{ item.color | heroColor | titlecase }}
+            </span>
+          </td>
+          <td>
+            <span
+              [class.text-primary]="item.creator === 0"
+              [class.text-warning]="item.creator === 1"
+            >
+              {{ item.creator | heroCreator }}
+            </span>
+          </td>
+        </tr>
+       }
     </tbody>
   </table>
-</div>
+</section>
